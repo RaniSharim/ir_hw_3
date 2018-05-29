@@ -1,6 +1,7 @@
 package com.ir;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -35,11 +36,15 @@ public class Main {
                     t -> Arrays.stream(t.split("\\W+")).skip(1).map(s-> Integer.parseInt(s)).collect(Collectors.toList())
             ).collect(Collectors.toList());
 
+            StringBuffer resultStr = new StringBuffer();
 
             for (MyQuery query: queries) {
                 List<Integer> results = indexer.search(query);
                 List<Integer> queryTruth = truth.get(query.QueryId - 1);
 //                System.out.println(query.QueryId + " " + String.join(" ",  results.stream().map(i -> i.toString()).collect(Collectors.toList())));
+                resultStr.append(query.QueryId + " " + String.join(" ",  results.stream().map(i -> i.toString()).collect(Collectors.toList())));
+
+
                 float selected = results.size();
                 float relevant = queryTruth.size();
 
@@ -49,9 +54,10 @@ public class Main {
                 float precision = (selected>0?tp/selected:0);
                 float recall = (tp/relevant);
                 float f1Score = (precision + recall > 0) ? (precision*recall) / (precision + recall) : 0f;
-//                System.out.println("precision: " + (tp/selected) + " recall: " + (tp/relevant));
                 System.out.println( precision + "\t" + recall + "\t" + f1Score);
             }
+
+            Files.write(Paths.get(config.outputFile), resultStr.toString().getBytes());
         }
         catch (Exception e) {
             System.out.println(e.toString());
