@@ -25,7 +25,7 @@ public class Main {
                 indexer = new BasicIndexer(1.0f);
             }
             else {
-                indexer = new ImprovedIndexer(1.0f);
+                indexer = new ImprovedIndexer(1.8f);
             }
 
             indexer.addDocuments(MyDocument.readDocuments(config.docFile));

@@ -58,7 +58,7 @@ public class ImprovedIndexer implements IIndexer {
         Document luceneDoc = new Document();
 
         // Try to convert some terms to get more relevant results. Doesn't really seem to work
-        replaceKnownNames(doc);
+//        replaceKnownNames(doc);
 
         luceneDoc.add(new StoredField("docId", doc.DocId));
         luceneDoc.add(new TextField("body", doc.Text, Field.Store.YES));
@@ -75,7 +75,7 @@ public class ImprovedIndexer implements IIndexer {
         searcher.setSimilarity(new ClassicSimilarity() {
             @Override
             public float tf(float freq) {
-                return super.tf(freq);
+                return freq;
             }
 
             @Override
@@ -91,7 +91,7 @@ public class ImprovedIndexer implements IIndexer {
         });
 
         // Try to convert some terms to get more relevant results. Doesn't really seem to work
-        enhanceQueryTerms(query);
+//        enhanceQueryTerms(query);
 
         // Do the search, lucene handles breaking the query/panctuation/stop words
         Query q = new QueryParser("body", analyzer).parse(query.Text);
@@ -99,11 +99,14 @@ public class ImprovedIndexer implements IIndexer {
         TopDocs topDocs = searcher.search(q, NumberOfDocs);
         ScoreDoc[] hits = topDocs.scoreDocs;
 
-        // This is a dynamic threshold, to be relative to all the docs
-        if (hits.length > 0) {
-            Threshhold = hits[hits.length/10].score;
-        }
+//         This is a dynamic threshold, to be relative to all the docs
+//        if (hits.length > 0) {
+//            Threshhold = hits[hits.length/10].score;
+//        }
 
+        if (hits.length > 0) {
+            Threshhold = hits[0].score * 1 / 2;
+        }
         List<Integer> results = new ArrayList<>();
 
         for (ScoreDoc hit: hits) {
@@ -112,6 +115,21 @@ public class ImprovedIndexer implements IIndexer {
                 results.add(Integer.parseInt(d.get("docId")));
             }
         }
+
+//        if (results.size() == 0) {
+//
+//            // Use a dynamic threshold, to be relative to all the docs
+//            if (hits.length > 0) {
+//                Threshhold = hits[hits.length / 10].score;
+//
+//                for (ScoreDoc hit : hits) {
+//                    if (hit.score >= Threshhold) {
+//                        Document d = searcher.doc(hit.doc);
+//                        results.add(Integer.parseInt(d.get("docId")));
+//                    }
+//                }
+//            }
+//        }
 
         Collections.sort(results);
 
