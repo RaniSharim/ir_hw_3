@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface IIndexer {
     void addDocuments(List<MyDocument> documents) throws IOException;
+
     List<Integer> search(MyQuery query) throws IOException, ParseException;
 }

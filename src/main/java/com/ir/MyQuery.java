@@ -6,13 +6,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyQuery {
-    public int QueryId;
-    public String Text;
+class MyQuery {
+    int QueryId;
+    String Text;
 
-    public static List<MyQuery> readQueries(String filename) throws IOException {
+    static List<MyQuery> readQueries(String filename) throws IOException {
         List<String> queryLines = Files.readAllLines(Paths.get(filename));
-        List<MyQuery> queries = new ArrayList<MyQuery>();
+        List<MyQuery> queries = new ArrayList<>();
 
         MyQuery currentQuery = null;
         StringBuffer currentQueryText = null;

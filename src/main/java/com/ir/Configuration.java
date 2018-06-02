@@ -5,13 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class Configuration {
-    public String queryFile;
-    public String docFile;
-    public String outputFile;
-    public String retrievalAlgorithm;
+class Configuration {
+    String queryFile;
+    String docFile;
+    String outputFile;
+    String retrievalAlgorithm;
 
-    public static Configuration readConfiguration(String filename) throws IOException {
+    static Configuration readConfiguration(String filename) throws IOException {
         List<String> configurationLines = Files.readAllLines(Paths.get(filename));
 
         Configuration config = new Configuration();
