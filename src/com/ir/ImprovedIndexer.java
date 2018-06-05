@@ -1,5 +1,6 @@
 package com.ir;
 
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -27,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ImprovedIndexer implements IIndexer {
-    StandardAnalyzer analyzer = new StandardAnalyzer();
+    EnglishAnalyzer analyzer = new EnglishAnalyzer();
     Directory index = new RAMDirectory();
 
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
