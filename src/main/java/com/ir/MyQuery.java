@@ -1,4 +1,4 @@
-package com.ir;
+package main.java.com.ir;
 
 import java.io.IOException;
 import java.nio.file.Files;

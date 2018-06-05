@@ -1,4 +1,4 @@
-package com.ir;
+package main.java.com.ir;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;

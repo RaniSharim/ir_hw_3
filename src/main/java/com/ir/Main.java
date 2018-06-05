@@ -1,4 +1,4 @@
-package com.ir;
+package main.java.com.ir;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -40,7 +40,8 @@ public class Main {
                         .append(" ")
                         .append(String.join(" ", results.stream()
                                 .map(Object::toString)
-                                .collect(Collectors.toList())));
+                                .collect(Collectors.toList())))
+                        .append("\n");
 
 
                 float selected = results.size();
