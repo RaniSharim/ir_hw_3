@@ -48,6 +48,8 @@ public class ImprovedIndexer implements IIndexer {
         NumberOfDocs = documents.size();
     }
 
+    // Here we tried to replace split words with a single term
+    // We ended up noy using it
     private void replaceKnownNames(MyDocument doc) {
         doc.Text = doc.Text.replace("VIET NAM", "VIETNAM");
         doc.Text = doc.Text.replace("VIET CONG", "VIETCONG");
@@ -57,7 +59,7 @@ public class ImprovedIndexer implements IIndexer {
         Document luceneDoc = new Document();
 
         // Try to convert some terms to get more relevant results. Doesn't really seem to work
-//        replaceKnownNames(doc);
+        // replaceKnownNames(doc);
 
         luceneDoc.add(new StoredField("docId", doc.DocId));
         luceneDoc.add(new TextField("body", doc.Text, Field.Store.YES));
@@ -70,9 +72,10 @@ public class ImprovedIndexer implements IIndexer {
         IndexReader reader = DirectoryReader.open(index);
         IndexSearcher searcher = new IndexSearcher(reader);
 
-        // This sets the similarity to classic tf/idf
+        // This sets the similarity to classic tf/idf, other then what we override
         searcher.setSimilarity(new ClassicSimilarity() {
             @Override
+            // Use a full /non-log count, to boost the meaningful terms
             public float tf(float freq) {
                 return freq;
             }
@@ -90,7 +93,7 @@ public class ImprovedIndexer implements IIndexer {
         });
 
         // Try to convert some terms to get more relevant results. Doesn't really seem to work
-//        enhanceQueryTerms(query);
+        // enhanceQueryTerms(query);
 
         // Do the search, lucene handles breaking the query/panctuation/stop words
         Query q = new QueryParser("body", analyzer).parse(query.Text);
@@ -98,11 +101,7 @@ public class ImprovedIndexer implements IIndexer {
         TopDocs topDocs = searcher.search(q, NumberOfDocs);
         ScoreDoc[] hits = topDocs.scoreDocs;
 
-//         This is a dynamic threshold, to be relative to all the docs
-//        if (hits.length > 0) {
-//            Threshhold = hits[hits.length/10].score;
-//        }
-
+        // Calculate a dynamic threshold, based on the top score
         if (hits.length > 0) {
             Threshhold = hits[0].score * 1 / 2;
         }
@@ -115,34 +114,21 @@ public class ImprovedIndexer implements IIndexer {
             }
         }
 
-//        if (results.size() == 0) {
-//
-//            // Use a dynamic threshold, to be relative to all the docs
-//            if (hits.length > 0) {
-//                Threshhold = hits[hits.length / 10].score;
-//
-//                for (ScoreDoc hit : hits) {
-//                    if (hit.score >= Threshhold) {
-//                        Document d = searcher.doc(hit.doc);
-//                        results.add(Integer.parseInt(d.get("docId")));
-//                    }
-//                }
-//            }
-//        }
-
         Collections.sort(results);
 
         return results;
     }
 
+    // Here we tried to enhanche the query with synonyms
+    // This ended up not having any effect at all
     private void enhanceQueryTerms(MyQuery query) {
         if (query.Text.contains("COUP")) {
             query.Text += "REBEL";
         }
 
-//        if (query.Text.contains("ALTERNATIVE")) {
-//            query.Text += "PROGRAM PLAN";
-//        }
+        if (query.Text.contains("ALTERNATIVE")) {
+            query.Text += "PROGRAM PLAN";
+        }
 
         query.Text = query.Text.replace("VIET NAM", "VIETNAM");
         query.Text = query.Text.replace("VIET CONG", "VIETCONG");
